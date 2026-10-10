@@ -1,14 +1,11 @@
 import { create } from "zustand"
-import type { Variable } from "@/utils/types"
 import { YEAR_MAX, YEAR_MIN } from "@/utils/constants"
 
 interface DashboardState {
-  variable: Variable
   month: number
   year: number
   playing: boolean
   speed: number
-  setVariable: (variable: Variable) => void
   setMonth: (month: number) => void
   setYear: (year: number) => void
   stepMonth: (delta: number) => void
@@ -19,12 +16,10 @@ interface DashboardState {
 }
 
 export const useDashboardStore = create<DashboardState>((set) => ({
-  variable: "sic",
   month: 9,
   year: YEAR_MAX,
   playing: false,
   speed: 500,
-  setVariable: (variable) => set({ variable }),
   setMonth: (month) => set({ month }),
   setYear: (year) => set({ year }),
   stepMonth: (delta) =>

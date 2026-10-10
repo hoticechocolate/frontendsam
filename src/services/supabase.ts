@@ -19,6 +19,15 @@ export interface SicMapRow {
   created_at: string
 }
 
+export interface MonthlyMetric {
+  year: number
+  month: number
+  f1: number
+  accuracy: number
+  precision: number
+  recall: number
+}
+
 export interface ModelEvaluationRow {
   id: number
   experiment_id: string
@@ -33,6 +42,8 @@ export interface ModelEvaluationRow {
     best?: { epoch: number; val_loss: number }
     points?: { epoch: number; train_loss: number; val_loss: number }[]
   }
+  // binary_ice_metrics_test_monthly.csv 의 active_union_cnn_* (test 기간 2018-01~2025-12)
+  monthly_metrics?: MonthlyMetric[] | null
   classification_metrics: {
     test_period?: string
     n_months?: number

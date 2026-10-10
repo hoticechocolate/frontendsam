@@ -1,14 +1,12 @@
 import MainLayout from "@/components/layout/MainLayout"
 import SwipeCompare from "@/components/comparison/SwipeCompare"
-import MonthSelector from "@/components/controls/MonthSelector"
-import VariableSelector from "@/components/controls/VariableSelector"
+import MonthControlBar from "@/components/controls/MonthControlBar"
 import MapViewer from "@/components/mapViewer/MapViewer"
 // 새로 추가될 미래 예측 컴포넌트 임포트 (경로는 프로젝트 구조에 맞게 수정 필요)
 import FuturePredictionViewer from "@/components/mapViewer/FuturePredictionViewer" 
-import LearningCurveChart from "@/components/model/LearningCurveChart"
-import MetricsBarChart from "@/components/model/MetricsBarChart"
-import ConfusionMatrixCard from "@/components/model/ConfusionMatrixCard"
-import ModelInfoCard from "@/components/model/ModelInfoCard"
+
+// 메인 2열 레이아웃: 왼쪽(지도 뷰어) = 50% + 100px, 오른쪽 = 나머지
+const COLS = "xl:grid-cols-[calc(50%+100px)_minmax(0,1fr)]"
 
 export default function DashboardPage() {
   return (
@@ -30,33 +28,17 @@ export default function DashboardPage() {
       </div>
 
       {/* 2. 컨트롤 영역 (카드 스타일로 병합) */}
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center rounded-xl bg-white p-4 shadow-sm border border-slate-100">
-        <div className="w-full lg:w-auto">
-          <VariableSelector />
-        </div>
-        <div className="w-full flex-1">
-          <MonthSelector />
-        </div>
-      </div>
+      {/* 월 선택 — 위쪽에선 카드, 스크롤하면 상단 고정 바 + 아코디언 */}
+      <MonthControlBar />
 
-      {/* 3. 메인 지도 영역 (관측 지도 6 : 예측 지도 4) */}
-      <div className="grid gap-4 xl:grid-cols-[calc(50%+100px)_minmax(0,1fr)]">
+      {/* 3. 메인 지도 영역 — 아래 행들도 같은 열 경계(COLS)를 써서 세로로 정렬 */}
+      <div className={`grid gap-4 ${COLS}`}>
         <MapViewer />
         <FuturePredictionViewer />
       </div>
 
-      {/* 4. 모델 학습 곡선 6 : 두 연도 비교 4 */}
-      <div className="grid gap-4 xl:grid-cols-[6fr_4fr]">
-        <LearningCurveChart />
-        <SwipeCompare />
-      </div>
-
-      {/* 5. 모델 평가 (model_evaluation 테이블) */}
-      <div className="grid gap-4 lg:grid-cols-3">
-        <MetricsBarChart />
-        <ConfusionMatrixCard />
-        <ModelInfoCard />
-      </div>
+      {/* 4. 두 연도 비교 (모델 성능 카드는 '모델 성능' 페이지로 이동) */}
+      <SwipeCompare />
     </MainLayout>
   )
 }

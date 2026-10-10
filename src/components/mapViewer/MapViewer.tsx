@@ -24,7 +24,8 @@ function Compass({
 }
 
 export default function MapViewer() {
-  const variable = useDashboardStore((s) => s.variable)
+  // 변수 선택 기능 제거 → 해빙 농도(SIC)만 표시
+  const variable = "sic" as const
   const month = useDashboardStore((s) => s.month)
   const year = useDashboardStore((s) => s.year)
   const meta = VARIABLES[variable]
@@ -33,14 +34,14 @@ export default function MapViewer() {
     <section className="flex flex-col h-full overflow-hidden rounded-2xl bg-white text-navy-900 border border-line">
       
       {/* ✅ 수정: 제목 영역을 flex로 바꾸고 뱃지를 헤더 우측으로 이동 */}
-      <div className="flex items-start justify-between px-5 pt-5 pb-2">
-        <h2 className="text-base font-bold">북극 해빙 지도 뷰어</h2>
+      <div className="flex min-h-[76px] items-center justify-between gap-3 bg-navy-900 px-5 py-4 text-white">
+        <h2 className="text-base font-bold text-white">북극 해빙 지도 뷰어</h2>
         
         {/* 지도 위를 가리던 뱃지를 이쪽으로 깔끔하게 뺐습니다 */}
-        <div className="flex items-center gap-2.5 rounded-lg border border-line bg-slate-50 px-3 py-1.5">
-          <p className="text-sm font-bold text-navy-900">{formatYearMonth(year, month)}</p>
-          <div className="h-3 w-px bg-line" /> {/* 세로 얇은 구분선 */}
-          <p className="flex items-center gap-1 text-[11px] text-slate-500">
+        <div className="flex items-center gap-2.5 rounded-lg border border-white/20 bg-white/10 px-3 py-1.5">
+          <p className="text-sm font-bold text-white">{formatYearMonth(year, month)}</p>
+          <div className="h-3 w-px bg-white/25" /> {/* 세로 얇은 구분선 */}
+          <p className="flex items-center gap-1 text-[11px] text-slate-300">
             {meta.label}
             <Icon name="info" className="size-3.5" />
           </p>

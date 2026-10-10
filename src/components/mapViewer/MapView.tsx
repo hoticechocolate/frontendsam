@@ -3,7 +3,6 @@ import type { Variable } from "@/utils/types"
 import { getMapImage } from "@/utils/mapImages"
 import { useSicMapUrl } from "@/hooks/useSupabaseData"
 import type { MapKind } from "@/services/supabase"
-import MapCanvas from "./MapCanvas"
 
 interface MapViewProps {
   variable: Variable
@@ -16,7 +15,7 @@ interface MapViewProps {
   kind?: MapKind
 }
 
-// 이미지 우선순위: assets/maps 로컬 사진 → Supabase(sic_maps 테이블) → 원격 템플릿 → 샘플 Canvas 지도
+// 이미지 우선순위: assets/maps 로컬 사진 → Supabase(sic_maps 테이블) → 원격 템플릿 (없으면 안내 문구)
 export default function MapView({ kind = "observed", ...props }: MapViewProps) {
   const local = kind === "observed" ? getMapImage(props.variable, props.year, props.month) : undefined
   const remote = useSicMapUrl(props.year, props.month, kind)
@@ -24,11 +23,22 @@ export default function MapView({ kind = "observed", ...props }: MapViewProps) {
   const src = useSupabase ? (localOnly(local) ?? remote.url ?? local) : local
   const [failedSrc, setFailedSrc] = useState<string>()
 
-  // Supabase 목록을 불러오는 동안은 Canvas 대신 빈 영역을 보여 깜빡임을 줄인다
+  // Supabase 목록을 불러오는 동안은 빈 영역
   if (useSupabase && !localOnly(local) && remote.loading) {
     return <div className={props.className} style={props.style} aria-busy="true" />
   }
-  if (!src || failedSrc === src) return <MapCanvas {...props} />
+  if (!src || failedSrc === src) {
+    return (
+      <div
+        className={`${props.className ?? ""} grid place-items-center bg-slate-100 text-xs text-slate-500`}
+        style={props.style}
+        role="img"
+        aria-label={`${props.label} (이미지 없음)`}
+      >
+        이미지가 없습니다
+      </div>
+    )
+  }
   return (
     <img
       src={src}

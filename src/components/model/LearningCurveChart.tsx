@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from "react"
+import { useEffect, useRef, useState, type MouseEvent } from "react"
 import Card from "@/components/common/Card"
 import { useModelEvaluation } from "@/hooks/useSupabaseData"
 import ModelState from "./ModelState"
@@ -6,25 +6,38 @@ import { INK, SERIES, loss } from "./modelTheme"
 
 type Point = { epoch: number; train_loss: number; val_loss: number }
 
-const W = 640
-const H = 250
+// 너비는 카드 실제 너비를 따라가고 높이는 고정 (글자 크기가 화면 크기와 상관없이 일정)
+const H = 440
 const L = 48
 const R = 64
 const T = 16
 const B = 34
 
 function niceMax(v: number) {
-  const step = 0.005
+  const step = 0.0025
   return Math.ceil(v / step) * step
 }
 
 function CurveSvg({ points, bestEpoch }: { points: Point[]; bestEpoch?: number }) {
   const [hover, setHover] = useState<Point | null>(null)
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const [W, setW] = useState(640)
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => setW(Math.max(320, Math.round(entry.contentRect.width))))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
   const maxEpoch = points[points.length - 1].epoch
-  const yMax = niceMax(Math.max(...points.flatMap((p) => [p.train_loss, p.val_loss])))
+  // y축을 데이터 범위에 맞춰 확대 (0부터 시작하지 않음 → 에폭 간 변화가 잘 보임)
+  const STEP = 0.0025
+  const values = points.flatMap((p) => [p.train_loss, p.val_loss])
+  const yMin = Math.max(0, Math.floor(Math.min(...values) / STEP) * STEP)
+  const yMax = niceMax(Math.max(...values))
   const X = (e: number) => L + ((e - 1) / Math.max(1, maxEpoch - 1)) * (W - L - R)
-  const Y = (v: number) => T + (1 - v / yMax) * (H - T - B)
-  const yTicks = Array.from({ length: Math.round(yMax / 0.005) + 1 }, (_, i) => i * 0.005)
+  const Y = (v: number) => T + (1 - (v - yMin) / (yMax - yMin)) * (H - T - B)
+  const yTicks = Array.from({ length: Math.round((yMax - yMin) / STEP) + 1 }, (_, i) => +(yMin + i * STEP).toFixed(4))
   const xTicks = [1, ...Array.from({ length: Math.floor(maxEpoch / 5) }, (_, i) => (i + 1) * 5)]
   const path = (k: "train_loss" | "val_loss") =>
     points.map((p, i) => `${i ? "L" : "M"}${X(p.epoch).toFixed(1)},${Y(p[k]).toFixed(1)}`).join("")
@@ -49,30 +62,30 @@ function CurveSvg({ points, bestEpoch }: { points: Point[]; bestEpoch?: number }
   }
 
   return (
-    <div className="relative">
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="에폭별 학습·검증 손실 그래프">
+    <div ref={wrapRef} className="relative">
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} role="img" aria-label="에폭별 학습·검증 손실 그래프">
         {yTicks.map((t) => (
           <g key={t}>
             <line x1={L} x2={W - R} y1={Y(t)} y2={Y(t)} stroke={INK.grid} />
-            <text x={L - 6} y={Y(t) + 3} textAnchor="end" fontSize="10" fill={INK.secondary}>
-              {t === 0 ? "0" : t.toFixed(3)}
+            <text x={L - 6} y={Y(t) + 3} textAnchor="end" fontSize="11" fill={INK.secondary}>
+              {t === 0 ? "0" : t.toFixed(4)}
             </text>
           </g>
         ))}
         <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke={INK.axis} />
         {xTicks.map((e) => (
-          <text key={e} x={X(e)} y={H - B + 14} textAnchor="middle" fontSize="10" fill={INK.secondary}>
+          <text key={e} x={X(e)} y={H - B + 14} textAnchor="middle" fontSize="11" fill={INK.secondary}>
             {e}
           </text>
         ))}
-        <text x={(L + W - R) / 2} y={H - 3} textAnchor="middle" fontSize="10" fill={INK.secondary}>
+        <text x={(L + W - R) / 2} y={H - 3} textAnchor="middle" fontSize="11" fill={INK.secondary}>
           에폭
         </text>
 
         {best && (
           <g>
             <line x1={X(best.epoch)} x2={X(best.epoch)} y1={T} y2={H - B} stroke={INK.muted} strokeDasharray="3 3" />
-            <text x={X(best.epoch) - 4} y={T + 9} textAnchor="end" fontSize="10" fontWeight="600" fill={INK.primary}>
+            <text x={X(best.epoch) - 4} y={T + 9} textAnchor="end" fontSize="11" fontWeight="600" fill={INK.primary}>
               best · {best.epoch}에폭
             </text>
           </g>
@@ -86,8 +99,8 @@ function CurveSvg({ points, bestEpoch }: { points: Point[]; bestEpoch?: number }
         )}
 
         {/* 끝점 직접 라벨 */}
-        <text x={W - R + 6} y={yTrain + 3} fontSize="10" fontWeight="600" fill={INK.primary}>학습</text>
-        <text x={W - R + 6} y={yVal + 3} fontSize="10" fontWeight="600" fill={INK.primary}>검증</text>
+        <text x={W - R + 6} y={yTrain + 3} fontSize="11" fontWeight="600" fill={INK.primary}>학습</text>
+        <text x={W - R + 6} y={yVal + 3} fontSize="11" fontWeight="600" fill={INK.primary}>검증</text>
 
         {hover && (
           <g pointerEvents="none">

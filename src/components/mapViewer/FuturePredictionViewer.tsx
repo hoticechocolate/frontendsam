@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useDashboardStore } from "@/hooks/useDashboardStore"
 import { useModelEvaluation, useSicMapUrl } from "@/hooks/useSupabaseData"
+import { useAnimatedNumber } from "@/hooks/useAnimatedNumber"
 import { supabaseEnabled, type MapKind } from "@/services/supabase"
 import { formatYearMonth } from "@/utils/formatters"
 
@@ -19,28 +20,38 @@ export default function FuturePredictionViewer() {
   const { data: evaluation } = useModelEvaluation()
   const [failedUrl, setFailedUrl] = useState<string>()
 
-  const metrics = evaluation?.classification_metrics.metrics
   const testPeriod = evaluation?.classification_metrics.test_period
+  // 선택한 연·월의 test 성능 (binary_ice_metrics 월별 CSV). test 기간 밖이면 전체 test 성능을 보여준다
+  const monthly = evaluation?.monthly_metrics?.find((m) => m.year === year && m.month === month)
+  const metrics = monthly ?? evaluation?.classification_metrics.metrics
+
+  const f1 = useAnimatedNumber(metrics?.f1)
+  const accuracy = useAnimatedNumber(metrics?.accuracy)
+  const precision = useAnimatedNumber(metrics?.precision)
+  const recall = useAnimatedNumber(metrics?.recall)
 
   return (
     <section className="flex flex-col overflow-hidden rounded-2xl bg-white text-navy-900 border border-line">
       {/* 1. 상단 헤더 영역 */}
-      <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-2">
+      <div className="flex min-h-[76px] items-center justify-between gap-3 bg-navy-900 px-5 py-4 text-white">
         <div>
-          <h2 className="text-base font-bold">CNN 해빙 예측</h2>
-          <p className="mt-1 text-xs text-slate-500">
+          <h2 className="text-base font-bold text-white">CNN 해빙 예측</h2>
+          <p className="mt-1 text-xs text-slate-300">
             {formatYearMonth(year, month)} · 관측 지도와 같은 연월
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-full border border-brand/25 bg-brand-soft px-3 py-1.5 text-[11px]">
-          <span className="text-slate-600">모델 F1</span>
-          <span className="font-bold text-brand">{pct(metrics?.f1)}</span>
+        <div
+          className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px]"
+          title={monthly ? `${formatYearMonth(year, month)} test F1` : `test 전체 F1 (${testPeriod ?? ""})`}
+        >
+          <span className="text-slate-300">{monthly ? `${month}월 F1` : "모델 F1"}</span>
+          <span className="w-11 text-right font-bold tabular-nums text-white">{pct(f1)}</span>
         </div>
       </div>
 
       {/* 예측 / 오차 전환 */}
-      <div className="px-5">
+      <div className="px-5 pt-4">
         <div className="inline-flex rounded-lg border border-line bg-slate-50 p-0.5" role="group">
           {TABS.map((t) => (
             <button
@@ -86,12 +97,15 @@ export default function FuturePredictionViewer() {
       {/* 3. 하단 모델 성능 영역 */}
       <div className="flex flex-col justify-center h-[88px] px-5 border-t border-line bg-slate-50">
         <p className="text-[10px] font-bold text-brand mb-1">
-          MODEL EVALUATION{testPeriod ? ` · TEST ${testPeriod}` : ""}
+          MODEL EVALUATION ·{" "}
+          {monthly
+            ? `${year}년 ${month}월`
+            : `TEST 전체${testPeriod ? ` ${testPeriod}` : ""} (해당 월은 test 기간 밖)`}
         </p>
         <div className="flex gap-4 text-xs text-slate-500">
-          <span>정확도 <b className="text-navy-900">{pct(metrics?.accuracy)}</b></span>
-          <span>정밀도 <b className="text-navy-900">{pct(metrics?.precision)}</b></span>
-          <span>재현율 <b className="text-navy-900">{pct(metrics?.recall)}</b></span>
+          <span>정확도 <b className="inline-block w-11 tabular-nums text-navy-900">{pct(accuracy)}</b></span>
+          <span>정밀도 <b className="inline-block w-11 tabular-nums text-navy-900">{pct(precision)}</b></span>
+          <span>재현율 <b className="inline-block w-11 tabular-nums text-navy-900">{pct(recall)}</b></span>
         </div>
       </div>
     </section>

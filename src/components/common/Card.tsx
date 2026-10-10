@@ -9,6 +9,7 @@ interface CardProps {
   className?: string
 }
 
+// 모든 카드 공통: 남색 헤더 바(상단 헤더와 같은 navy-900) + 흰 본문
 export default function Card({
   code,
   title,
@@ -19,25 +20,25 @@ export default function Card({
 }: CardProps) {
   return (
     <section
-      className={`min-w-0 rounded-2xl border border-line bg-white p-4 ${className}`}
+      className={`flex min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-white ${className}`}
     >
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="flex flex-wrap items-baseline gap-x-2 text-sm font-bold text-navy-900">
-          {code && <span className="text-base font-bold">{code}</span>}
+      <div className="flex min-h-[60px] items-center justify-between gap-3 bg-navy-900 px-5 py-3 text-white">
+        <h2 className="flex flex-wrap items-baseline gap-x-2 text-base font-bold text-white">
+          {code && <span>{code}</span>}
           <span>{title}</span>
           {note && (
-            <span className="text-[11px] font-medium text-slate-500">
+            <span className="text-[11px] font-medium text-slate-300">
               {note}
             </span>
           )}
         </h2>
         {badge && (
-          <span className="shrink-0 rounded-full bg-brand-soft px-2.5 py-1 text-[11px] font-semibold text-brand">
+          <span className="shrink-0 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white">
             {badge}
           </span>
         )}
       </div>
-      {children}
+      <div className="flex flex-1 flex-col p-4">{children}</div>
     </section>
   )
 }

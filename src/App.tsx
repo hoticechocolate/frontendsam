@@ -1,5 +1,8 @@
 import DashboardPage from "@/pages/DashboardPage"
+import ModelPerformancePage from "@/pages/ModelPerformancePage"
+import { useHashRoute } from "@/hooks/useHashRoute"
 
 export default function App() {
-  return <DashboardPage />
+  const route = useHashRoute()
+  return route === "model" ? <ModelPerformancePage /> : <DashboardPage />
 }

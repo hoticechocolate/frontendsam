@@ -27,7 +27,7 @@ export default function ConfusionMatrixCard() {
           ]
           return (
             <>
-              <div className="grid grid-cols-[auto_1fr_1fr] gap-1 text-[11px]">
+              <div className="grid flex-1 grid-cols-[auto_1fr_1fr] grid-rows-[auto_1fr_1fr] gap-1 text-[11px]">
                 <span />
                 <span className="pb-1 text-center font-semibold text-slate-500">예측: 얼음</span>
                 <span className="pb-1 text-center font-semibold text-slate-500">예측: 바다</span>
@@ -44,7 +44,7 @@ export default function ConfusionMatrixCard() {
                         <div
                           key={cell.key}
                           title={`${cell.label}: ${count(cell.v)}픽셀 (${pct(share)})`}
-                          className="flex aspect-[4/3] flex-col justify-center rounded-lg px-2 text-center"
+                          className="flex min-h-28 flex-col justify-center rounded-lg px-2 py-4 text-center"
                           style={{ background: shade(share) }}
                         >
                           <p className={`font-semibold ${dark ? "text-white" : "text-navy-900"}`}>

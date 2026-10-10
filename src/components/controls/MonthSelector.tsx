@@ -8,8 +8,6 @@ export default function MonthSelector() {
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-sm font-bold text-navy-900">월 선택</p>
-      
       {/* 💡 relative를 추가하여 내부의 슬라이딩 박스가 기준을 잡을 수 있게 합니다 */}
       <div className="relative flex w-full rounded-lg bg-slate-100 p-1" role="group">
         
@@ -34,7 +32,7 @@ export default function MonthSelector() {
               onClick={() => setMonth(m)}
               // 💡 relative와 z-10을 주어 글자가 흰색 배경(하이라이트) 위로 올라오게 합니다.
               // 개별 버튼이 갖던 bg-white 클래스는 제거했습니다.
-              className={`relative z-10 flex-1 rounded-md py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+              className={`relative z-10 flex-1 rounded-md py-2.5 text-base font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                 isActive
                   ? "text-brand" 
                   : "text-slate-500 hover:text-slate-900"

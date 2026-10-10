@@ -1,12 +1,13 @@
-import Icon from "@/components/common/Icon"
+import logo from "@/assets/logo.png"
+import NavMenu from "./NavMenu"
 
 export default function Header() {
   return (
     <header className="bg-navy-900 text-white">
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-3">
-          <div className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-brand">
-            <Icon name="route" className="size-6" />
+          <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-full bg-white p-1">
+            <img src={logo} alt="폴라리스 로고" className="size-full object-contain" />
           </div>
           <div className="border-r border-white/25 pr-4">
             <p className="text-lg font-bold leading-tight">폴라리스</p>
@@ -21,6 +22,7 @@ export default function Header() {
             </p>
           </div>
         </div>
+        <NavMenu />
       </div>
     </header>
   )
