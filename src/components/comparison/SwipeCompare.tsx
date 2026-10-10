@@ -18,7 +18,7 @@ export default function SwipeCompare() {
   return (
     <Card title="두 연도 스와이프 비교">
       <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_200px]">
-        <div className="relative mx-auto aspect-square w-full max-w-[340px] overflow-hidden rounded-xl bg-navy-950">
+        <div className="relative mx-auto aspect-square w-full max-w-[340px] overflow-hidden rounded-xl border border-line bg-white">
           <MapView
             variable="sic"
             year={YEAR_MIN}

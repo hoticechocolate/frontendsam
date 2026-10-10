@@ -23,25 +23,25 @@ export default function FuturePredictionViewer() {
   const testPeriod = evaluation?.classification_metrics.test_period
 
   return (
-    <section className="flex flex-col overflow-hidden rounded-2xl bg-navy-950 text-white shadow-lg border border-slate-800">
+    <section className="flex flex-col overflow-hidden rounded-2xl bg-white text-navy-900 border border-line">
       {/* 1. 상단 헤더 영역 */}
       <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-2">
         <div>
           <h2 className="text-base font-bold">CNN 해빙 예측</h2>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-slate-500">
             {formatYearMonth(year, month)} · 관측 지도와 같은 연월
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1.5 text-[11px]">
-          <span className="text-slate-300">모델 F1</span>
-          <span className="font-bold text-sky-400">{pct(metrics?.f1)}</span>
+        <div className="flex items-center gap-2 rounded-full border border-brand/25 bg-brand-soft px-3 py-1.5 text-[11px]">
+          <span className="text-slate-600">모델 F1</span>
+          <span className="font-bold text-brand">{pct(metrics?.f1)}</span>
         </div>
       </div>
 
       {/* 예측 / 오차 전환 */}
       <div className="px-5">
-        <div className="inline-flex rounded-lg border border-white/20 bg-white/5 p-0.5" role="group">
+        <div className="inline-flex rounded-lg border border-line bg-slate-50 p-0.5" role="group">
           {TABS.map((t) => (
             <button
               key={t.kind}
@@ -49,7 +49,7 @@ export default function FuturePredictionViewer() {
               onClick={() => setKind(t.kind)}
               aria-pressed={kind === t.kind}
               className={`rounded-md px-3 py-1 text-xs font-semibold ${
-                kind === t.kind ? "bg-brand text-white" : "text-slate-300 hover:text-white"
+                kind === t.kind ? "bg-brand text-white" : "text-slate-500 hover:text-navy-900"
               }`}
             >
               {t.label}
@@ -63,14 +63,14 @@ export default function FuturePredictionViewer() {
         <div className="relative mx-auto aspect-square w-[88%] flex items-center justify-center">
           {loading ? (
             <div className="flex flex-col items-center gap-3 text-slate-500">
-              <div className="size-8 animate-spin rounded-full border-4 border-slate-700 border-t-brand" />
+              <div className="size-8 animate-spin rounded-full border-4 border-slate-200 border-t-brand" />
               <p className="text-xs">예측 지도를 불러오는 중...</p>
             </div>
           ) : url && failedUrl !== url ? (
             <img
               src={url}
               alt={`${formatYearMonth(year, month)} 해빙 ${kind === "predicted" ? "예측" : "오차"} 지도`}
-              className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl"
+              className="absolute inset-0 w-full h-full object-contain "
               onError={() => setFailedUrl(url)}
             />
           ) : (
@@ -84,14 +84,14 @@ export default function FuturePredictionViewer() {
       </div>
 
       {/* 3. 하단 모델 성능 영역 */}
-      <div className="flex flex-col justify-center h-[88px] px-5 border-t border-slate-800 bg-navy-900/50">
-        <p className="text-[10px] font-bold text-sky-400 mb-1">
+      <div className="flex flex-col justify-center h-[88px] px-5 border-t border-line bg-slate-50">
+        <p className="text-[10px] font-bold text-brand mb-1">
           MODEL EVALUATION{testPeriod ? ` · TEST ${testPeriod}` : ""}
         </p>
-        <div className="flex gap-4 text-xs text-slate-300">
-          <span>정확도 <b className="text-white">{pct(metrics?.accuracy)}</b></span>
-          <span>정밀도 <b className="text-white">{pct(metrics?.precision)}</b></span>
-          <span>재현율 <b className="text-white">{pct(metrics?.recall)}</b></span>
+        <div className="flex gap-4 text-xs text-slate-500">
+          <span>정확도 <b className="text-navy-900">{pct(metrics?.accuracy)}</b></span>
+          <span>정밀도 <b className="text-navy-900">{pct(metrics?.precision)}</b></span>
+          <span>재현율 <b className="text-navy-900">{pct(metrics?.recall)}</b></span>
         </div>
       </div>
     </section>
