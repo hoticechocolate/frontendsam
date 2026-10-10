@@ -22,7 +22,7 @@ export function usePlayback(defaultSpeed = 500) {
 
     const interval = setInterval(() => {
       if (yearRef.current >= YEAR_MAX) {
-        // 끝 연도(2025/2026)에 도달하면 다시 처음 연도(2005)로 되돌아가서 반복
+        // 끝 연도에 도달하면 다시 처음 연도(YEAR_MIN)로 되돌아가서 반복
         setYear(YEAR_MIN) 
       } else {
         // 다음 연도로 1년 증가

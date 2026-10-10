@@ -1,4 +1,4 @@
-export const YEAR_MIN = 2005
+export const YEAR_MIN = 2015
 export const YEAR_MAX = 2025
 
 export const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1)

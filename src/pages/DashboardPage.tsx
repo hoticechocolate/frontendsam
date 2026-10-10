@@ -1,15 +1,14 @@
 import MainLayout from "@/components/layout/MainLayout"
-import IceAreaTrendChart from "@/components/charts/IceAreaTrendChart"
-import VoyageChart from "@/components/charts/VoyageChart"
 import SwipeCompare from "@/components/comparison/SwipeCompare"
 import MonthSelector from "@/components/controls/MonthSelector"
 import VariableSelector from "@/components/controls/VariableSelector"
-import DataSources from "@/components/information/DataSources"
-import RouteInfo from "@/components/information/RouteInfo"
 import MapViewer from "@/components/mapViewer/MapViewer"
-import TripleView from "@/components/multiViews/TripleView"
 // 새로 추가될 미래 예측 컴포넌트 임포트 (경로는 프로젝트 구조에 맞게 수정 필요)
 import FuturePredictionViewer from "@/components/mapViewer/FuturePredictionViewer" 
+import LearningCurveChart from "@/components/model/LearningCurveChart"
+import MetricsBarChart from "@/components/model/MetricsBarChart"
+import ConfusionMatrixCard from "@/components/model/ConfusionMatrixCard"
+import ModelInfoCard from "@/components/model/ModelInfoCard"
 
 export default function DashboardPage() {
   return (
@@ -46,17 +45,17 @@ export default function DashboardPage() {
         <FuturePredictionViewer />
       </div>
 
-      {/* 4. 비교 분석 영역 (3변수 보기 6 : 두 연도 비교 4) */}
+      {/* 4. 모델 학습 곡선 6 : 두 연도 비교 4 */}
       <div className="grid gap-4 xl:grid-cols-[6fr_4fr]">
-        <TripleView />
+        <LearningCurveChart />
         <SwipeCompare />
       </div>
 
-      {/* 5. 하단 정보 및 차트 영역 (3등분) */}
+      {/* 5. 모델 평가 (model_evaluation 테이블) */}
       <div className="grid gap-4 lg:grid-cols-3">
-        <VoyageChart />
-        <IceAreaTrendChart />
-        <RouteInfo />
+        <MetricsBarChart />
+        <ConfusionMatrixCard />
+        <ModelInfoCard />
       </div>
     </MainLayout>
   )
