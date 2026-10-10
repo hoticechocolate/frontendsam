@@ -1,0 +1,10 @@
+{
+  "description": "Monitor and predict real-time weather and safety metrics for the Arctic Sea Route with advanced data visualization and intuitive insights for safe navigation.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
